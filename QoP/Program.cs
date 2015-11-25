@@ -94,12 +94,30 @@ namespace QoP
 			var blink = me.Spellbook.Spell2; //Blink
 			var scream = me.Spellbook.Spell3; //Scream of Pain
 			var sonic = me.Spellbook.Spell4; // Sonic Wave
-			//orchid = _me.FindItem("item_orchid"); //Orchid [Silence]
-			//hex = _me.FindItem("item_sheepstick"); //Hex [Disable]
-			//bkb = _me.FindItem("item_black_king_bar"); //BKB [Magic Immune]
-			//mask = _me.FindItem("item_mask_of_madness"); //Mask of Madness [Attack Speed]
-			//mjo = _me.FindItem("item_mjollnir"); //Mjollnir Buff [AoE lightning]
-			//shivas = _me.FindItem("item_shivas_guard"); //Shivas [AoE Slow]
+            Item orchid = null;
+            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_orchid"))
+            {
+                orchid = me.FindItem("item_orchid"); //Orchid [Silence]
+            }
+            Item hex = null;
+            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_sheepstick"))
+            {
+                hex = me.FindItem("item_sheepstick"); //Hex [Disable]
+            }
+            Item mask = null;
+            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_mask_of_madness"))
+            { 
+                mask = me.FindItem("item_mask_of_madness"); //Mask of Madness [Attack Speed]
+            }
+            Item mjo = null;
+            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_mjollnir"))
+            { mjo = me.FindItem("item_mjollnir"); //Mjollnir Buff [AoE lightning]
+            }
+            Item shivas = null;
+            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_shivas_guard"))
+            {
+                shivas = me.FindItem("item_shivas_guard"); //Shivas [AoE Slow]
+            }
             var neededMana = me.Mana - sonic.ManaCost;
             var allitems = me.Inventory.Items.Where(x => x.CanBeCasted() && x.ManaCost <= neededMana);
             var enumerable = allitems as Item[] ?? allitems.ToArray();
@@ -111,7 +129,7 @@ namespace QoP
                         x.Name == "item_sheepstick");
             var itemWithOutTarget = enumerable.FirstOrDefault(
                     x =>
-						x.Name == "item_silver_edge" || x.Name == "item_invis_sword");
+						x.Name == "item_shivas_guard");
             var itemOnMySelf = enumerable.FirstOrDefault(
                 x =>
                     x.Name == "item_mjollnir");
@@ -128,18 +146,12 @@ namespace QoP
                 Utils.Sleep(200 + Game.Ping, "nextAction");
                 return;
             }
-			//Mjollnir
+            #region Items
+            //Mjollnir
             if (itemOnMySelf != null && Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_mjollnir"))
             {
                 itemOnMySelf.UseAbility(me);
                 Utils.Sleep(50 + Game.Ping, "nextAction");
-                return;
-            }
-			//Shadow Blade & Silver Edge
-            if (itemWithOutTarget != null && distance <= attackRange && Menu.Item("shadow").GetValue<bool>())
-            {
-                itemWithOutTarget.UseAbility();
-                Utils.Sleep(100 + Game.Ping, "nextAction");
                 return;
             }
 			//Blink to Target
@@ -153,18 +165,24 @@ namespace QoP
                 Utils.Sleep(200 + Game.Ping, "blink");
                 return;
             }
-			//Invisible Attack
-			if (isInvis && distance <= attackRange)
-            {
-                me.Attack(target);
-                Utils.Sleep(200 + Game.Ping, "nextAction");
-            }
-            Utils.Sleep(10, "nextAction");
 			//Orchid & Hex
-            if (itemOnTarget != null && !isInvis)
+            if (itemOnTarget != null && Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_orchid"))
             {
-                itemOnTarget.UseAbility(target);
+                orchid.UseAbility(target);
                 Utils.Sleep(50 + Game.Ping, "nextAction");
+                return;
+            }
+            if (itemOnTarget != null && Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_sheepstick"))
+            {
+                hex.UseAbility(target);
+                Utils.Sleep(50 + Game.Ping, "nextAction");
+                return;
+            }
+            //Shivas Guard
+            if (itemWithOutTarget != null && Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_shivas_guard"))
+            {
+                itemWithOutTarget.UseAbility();
+                Utils.Sleep(100 + Game.Ping, "nextAction");
                 return;
             }
 			//BKB 
@@ -174,25 +192,27 @@ namespace QoP
                 Utils.Sleep(35+Game.Ping, "bkb");
                 return;
             }
-			//Spells
-			if (ss != null && ss.CanBeCasted() && distance <= ss.CastRange)
+            #endregion
+            #region Spells
+            if (ss != null && ss.CanBeCasted() && distance <= ss.CastRange && Utils.SleepCheck("nextAction"))
 			{
                 ss.UseAbility(target);
                 Utils.Sleep(150 + Game.Ping, "nextAction");
                 return;
             }
-			if (scream != null && scream.CanBeCasted() && distance <= scream.CastRange)
+            if (scream != null && scream.CanBeCasted() && Utils.SleepCheck("nextAction"))
 			{
                 scream.UseAbility();
                 Utils.Sleep(150 + Game.Ping, "nextAction");
                 return;
             }
-			if (sonic != null && sonic.CanBeCasted() && distance <= sonic.CastRange)
+            if (sonic != null && sonic.CanBeCasted() && distance <= sonic.CastRange && Utils.SleepCheck("nextAction"))
 			{
                 sonic.UseAbility(target.Position);
                 Utils.Sleep(150 + Game.Ping, "nextAction");
                 return;
             }
+            #endregion
         }
 		#endregion
 		#region ClosestToMouse

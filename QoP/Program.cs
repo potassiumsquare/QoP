@@ -81,6 +81,7 @@ namespace QoP
             }
             if (_target == null || !_target.IsValid || !_target.IsAlive || !me.CanCast()) return;
             ComboInAction(me, _target);
+            targetDistance = me.Distance2D(_target);
             turnTime = me.GetTurnTime(_target);
             OrbWalk(Orbwalking.CanCancelAnimation());
             #endregion

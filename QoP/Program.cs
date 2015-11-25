@@ -20,6 +20,8 @@ namespace QoP
         private static readonly Menu Menu = new Menu("[QoP#]", "[QoP#]", true);//Common.Menu
         private static Hero _target;
         private static Hero me;
+        private static float targetDistance;
+        private static double turnTime;
         #endregion
 
         private static void Main()
@@ -78,8 +80,9 @@ namespace QoP
                 _target = ClosestToMouse(me);
             }
             if (_target == null || !_target.IsValid || !_target.IsAlive || !me.CanCast()) return;
-            
             ComboInAction(me, _target);
+            turnTime = me.GetTurnTime(_target);
+            OrbWalk(Orbwalking.CanCancelAnimation());
             #endregion
         }
 		#region ComboInAction
@@ -209,7 +212,55 @@ namespace QoP
             #endregion
         }
 		#endregion
-		#region ClosestToMouse
+        #region OrbWalk
+        private static void OrbWalk(bool canCancel)
+        {
+            var canAttack = !Orbwalking.AttackOnCooldown(_target) && !_target.IsInvul() && !_target.IsAttackImmune()
+                            && me.CanAttack();
+            if (canAttack && (targetDistance <= (550)))
+            {
+                if (!Utils.SleepCheck("attack"))
+                {
+                    return;
+                }
+                me.Attack(_target);
+                Utils.Sleep(100, "attack");
+                return;
+            }
+
+            var canMove = (canCancel && Orbwalking.AttackOnCooldown(_target))
+                          || (!Orbwalking.AttackOnCooldown(_target) && targetDistance > 350);
+            if (!Utils.SleepCheck("move") || !canMove)
+            {
+                return;
+            }
+            var mousePos = Game.MousePosition;
+            if (_target.Distance2D(me) < 500)
+            {
+                var pos = _target.Position
+                          + _target.Vector3FromPolarAngle()
+                          * (float)
+                            Math.Max(
+                                (Game.Ping / 1000 + (targetDistance / me.MovementSpeed) + turnTime)
+                                * _target.MovementSpeed,
+                                500);
+                if (pos.Distance(me.Position) > _target.Distance2D(pos) - 80)
+                {
+                    me.Move(pos);
+                }
+                else
+                {
+                    me.Follow(_target);
+                }
+            }
+            else
+            {
+                me.Move(mousePos);
+            }
+            Utils.Sleep(100, "move");
+        }
+        #endregion
+        #region ClosestToMouse
         public static Hero ClosestToMouse(Hero source, float range = 600)
         {
             var mousePosition = Game.MousePosition;

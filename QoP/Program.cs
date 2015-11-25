@@ -32,16 +32,12 @@ namespace QoP
                 {"item_black_king_bar", false},
                 {"item_sheepstick", false},
                 {"item_orchid", true},
-                {"item_mask_of_madness", false},
                 {"item_mjollnir", false},
                 {"item_shivas_guard", false}
             };
             Menu.AddItem(new MenuItem("enabledAbilities", "Items:").SetValue(new AbilityToggler(dict)));
-			Menu.AddItem(new MenuItem("shadow", "Invisible:").SetValue(true).SetTooltip("use Shadow Blade & Silver Edge"));
             Menu.AddToMainMenu();
         }
-
-
         private static void Game_OnUpdate(EventArgs args)
         {
             #region Init
@@ -55,7 +51,7 @@ namespace QoP
                 _loaded = true;
 				#region Game Message Print
                 Game.PrintMessage(
-                    "<font color='#3377ff'>[QoP#]</font>: loaded! <font face='Tahoma' size='9'>(</font>",
+                    "<font color='#3377ff'>[QoP#]</font>: loaded! <font face='Tahoma' size='9'></font>",
                     MessageType.ChatMessage);
 				#endregion
             }
@@ -121,12 +117,10 @@ namespace QoP
             var neededMana = me.Mana - sonic.ManaCost;
             var allitems = me.Inventory.Items.Where(x => x.CanBeCasted() && x.ManaCost <= neededMana);
             var enumerable = allitems as Item[] ?? allitems.ToArray();
-            var isInvis = me.IsInvisible();
             var itemOnTarget =
                 enumerable.FirstOrDefault(
                     x =>
-                        x.Name == "item_orchid" ||
-                        x.Name == "item_sheepstick");
+                        x.Name == "item_orchid");
             var itemWithOutTarget = enumerable.FirstOrDefault(
                     x =>
 						x.Name == "item_shivas_guard");
@@ -155,7 +149,7 @@ namespace QoP
                 return;
             }
 			//Blink to Target
-            if (blink != null && blink.CanBeCasted() && !isInvis && distance >= attackRange && Utils.SleepCheck("blink"))
+            if (blink != null && blink.CanBeCasted() && distance >= attackRange && Utils.SleepCheck("blink"))
             {
                 var point = new Vector3(
                     (float)(target.Position.X - 20 * Math.Cos(me.FindAngleBetween(target.Position, true))),
@@ -172,7 +166,7 @@ namespace QoP
                 Utils.Sleep(50 + Game.Ping, "nextAction");
                 return;
             }
-            if (itemOnTarget != null && Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_sheepstick"))
+            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_sheepstick") && hex !=null && hex.CanBeCasted() && Utils.SleepCheck("nextAction"))
             {
                 hex.UseAbility(target);
                 Utils.Sleep(50 + Game.Ping, "nextAction");
@@ -186,7 +180,7 @@ namespace QoP
                 return;
             }
 			//BKB 
-            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_black_king_bar") && bkb != null && bkb.CanBeCasted() && Utils.SleepCheck("bkb") && !isInvis)
+            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("item_black_king_bar") && bkb != null && bkb.CanBeCasted() && Utils.SleepCheck("bkb"))
             {
                 bkb.UseAbility();
                 Utils.Sleep(35+Game.Ping, "bkb");

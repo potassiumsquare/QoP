@@ -113,6 +113,24 @@ namespace QoP
                     sonic.UseAbility(_target.Position);
                     Utils.Sleep(150 + Game.Ping, "sonic");
                 }
+                else if (nothingCanCast())
+                {
+                    _me.Attack(_target);
+                }
+            }
+        }
+        private static bool nothingCanCast()
+        {
+            if (!ss.CanBeCasted() &&
+                !blink.CanBeCasted() &&
+                !scream.CanBeCasted() &&
+                !sonic.CanBeCasted() &&
+                !orchid.CanBeCasted() &&
+                !hex.CanBeCasted())
+                return true;
+            else
+            {
+                return false;
             }
         }
         //Toggle BKB Key

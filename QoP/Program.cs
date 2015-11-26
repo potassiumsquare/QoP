@@ -29,17 +29,13 @@ namespace QoP
             Menu.AddItem(new MenuItem("comboKey", "Combo Key").SetValue(new KeyBind('D',KeyBindType.Press)).SetTooltip("Hold this key for combo"));
             var dict = new Dictionary<string, bool>
             {
-                {"queenofpain_scream_of_pain", true},
-                {"queenofpain_blink", false},
-                {"queenofpain_shadow_strike", true},
-                {"queenofpain_sonic_wave", true},
                 {"item_black_king_bar", false},
                 {"item_sheepstick", false},
                 {"item_orchid", true},
                 {"item_mjollnir", false},
                 {"item_shivas_guard", false}
             };
-            Menu.AddItem(new MenuItem("enabledAbilities", "Abilities & Items:").SetValue(new AbilityToggler(dict)));
+            Menu.AddItem(new MenuItem("enabledAbilities", "Items:").SetValue(new AbilityToggler(dict)));
             Menu.AddToMainMenu();
         }
         private static void Game_OnUpdate(EventArgs args)
@@ -190,27 +186,23 @@ namespace QoP
             }
             #endregion
             #region Spells
-            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("queenofpain_shadow_strike"))
+            if (ss != null && ss.CanBeCasted() && distance <= ss.CastRange && Utils.SleepCheck("nextAction"))
 			{
-                if (ss != null && ss.CanBeCasted() && distance <= ss.CastRange && Utils.SleepCheck("nextAction"))
-                    ss.UseAbility(target);
-                    Utils.Sleep(150 + Game.Ping, "nextAction");
-                    return;
+                ss.UseAbility(target);
+                Utils.Sleep(150 + Game.Ping, "nextAction");
+                return;
             }
-            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("queenofpain_scream_of_pain")) 
+            if (scream != null && scream.CanBeCasted() && Utils.SleepCheck("nextAction"))
 			{
-                if  (scream != null && scream.CanBeCasted() && Utils.SleepCheck("nextAction"))
-                    scream.UseAbility();
-                    Utils.Sleep(150 + Game.Ping, "nextAction");
-                    return;
+                scream.UseAbility();
+                Utils.Sleep(150 + Game.Ping, "nextAction");
+                return;
             }
-            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("queenofpain_sonic_wave"))
-                
+            if (sonic != null && sonic.CanBeCasted() && distance <= sonic.CastRange && Utils.SleepCheck("nextAction"))
 			{
-                if (sonic != null && sonic.CanBeCasted() && distance <= sonic.CastRange && Utils.SleepCheck("nextAction"))
-                    sonic.UseAbility(target.Position);
-                    Utils.Sleep(150 + Game.Ping, "nextAction");
-                    return;
+                sonic.UseAbility(target.Position);
+                Utils.Sleep(150 + Game.Ping, "nextAction");
+                return;
             }
             else if (!ss.CanBeCasted() && !scream.CanBeCasted() && !sonic.CanBeCasted())
             {

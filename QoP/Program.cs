@@ -190,23 +190,27 @@ namespace QoP
             }
             #endregion
             #region Spells
-            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("queenofpain_shadow_strike") && ss != null && ss.CanBeCasted() && distance <= ss.CastRange && Utils.SleepCheck("nextAction"))
+            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("queenofpain_shadow_strike"))
 			{
-                ss.UseAbility(target);
-                Utils.Sleep(150 + Game.Ping, "nextAction");
-                return;
+                if (ss != null && ss.CanBeCasted() && distance <= ss.CastRange && Utils.SleepCheck("nextAction"))
+                    ss.UseAbility(target);
+                    Utils.Sleep(150 + Game.Ping, "nextAction");
+                    return;
             }
-            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("queenofpain_scream_of_pain") && scream != null && scream.CanBeCasted() && Utils.SleepCheck("nextAction"))
+            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("queenofpain_scream_of_pain")) 
 			{
-                scream.UseAbility();
-                Utils.Sleep(150 + Game.Ping, "nextAction");
-                return;
+                if  (scream != null && scream.CanBeCasted() && Utils.SleepCheck("nextAction"))
+                    scream.UseAbility();
+                    Utils.Sleep(150 + Game.Ping, "nextAction");
+                    return;
             }
-            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("queenofpain_sonic_wave") && sonic != null && sonic.CanBeCasted() && distance <= sonic.CastRange && Utils.SleepCheck("nextAction"))
+            if (Menu.Item("enabledAbilities").GetValue<AbilityToggler>().IsEnabled("queenofpain_sonic_wave"))
+                
 			{
-                sonic.UseAbility(target.Position);
-                Utils.Sleep(150 + Game.Ping, "nextAction");
-                return;
+                if (sonic != null && sonic.CanBeCasted() && distance <= sonic.CastRange && Utils.SleepCheck("nextAction"))
+                    sonic.UseAbility(target.Position);
+                    Utils.Sleep(150 + Game.Ping, "nextAction");
+                    return;
             }
             else if (!ss.CanBeCasted() && !scream.CanBeCasted() && !sonic.CanBeCasted())
             {

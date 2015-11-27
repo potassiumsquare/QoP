@@ -148,7 +148,7 @@ namespace QoP
                 return;
             }
 			//Blink to Target
-            if (blink != null && Menu.Item("harass").GetValue<bool>() && blink.CanBeCasted() && distance >= attackRange && Utils.SleepCheck("blink"))
+            if (blink != null && !Menu.Item("harass").GetValue<bool>() && blink.CanBeCasted() && distance >= attackRange && Utils.SleepCheck("blink"))
             {
                 var point = new Vector3(
                     (float)(target.Position.X - 20 * Math.Cos(me.FindAngleBetween(target.Position, true))),
@@ -193,13 +193,13 @@ namespace QoP
                 Utils.Sleep(150 + Game.Ping, "nextAction");
                 return;
             }
-            if (scream != null && scream.CanBeCasted() && Utils.SleepCheck("nextAction"))
+            if (scream != null && !Menu.Item("harass").GetValue<bool>() && scream.CanBeCasted() && Utils.SleepCheck("nextAction"))
 			{
                 scream.UseAbility();
                 Utils.Sleep(150 + Game.Ping, "nextAction");
                 return;
             }
-            if (sonic != null && sonic.CanBeCasted() && distance <= sonic.CastRange && Utils.SleepCheck("nextAction"))
+            if (sonic != null && !Menu.Item("harass").GetValue<bool>() && sonic.CanBeCasted() && distance <= sonic.CastRange && Utils.SleepCheck("nextAction"))
 			{
                 sonic.UseAbility(target.Position);
                 Utils.Sleep(150 + Game.Ping, "nextAction");

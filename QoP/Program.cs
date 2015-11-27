@@ -36,6 +36,7 @@ namespace QoP
                 {"item_shivas_guard", false}
             };
             Menu.AddItem(new MenuItem("enabledAbilities", "Items:").SetValue(new AbilityToggler(dict)));
+            Menu.AddItem(new MenuItem("harass", "Harass:").SetValue(true).SetTooltip("harass midlaner")); //toggle to not blink
             Menu.AddToMainMenu();
         }
         private static void Game_OnUpdate(EventArgs args)
@@ -147,7 +148,7 @@ namespace QoP
                 return;
             }
 			//Blink to Target
-            if (blink != null && blink.CanBeCasted() && distance >= attackRange && Utils.SleepCheck("blink"))
+            if (blink != null && Menu.Item("harass").GetValue<bool>() && blink.CanBeCasted() && distance >= attackRange && Utils.SleepCheck("blink"))
             {
                 var point = new Vector3(
                     (float)(target.Position.X - 20 * Math.Cos(me.FindAngleBetween(target.Position, true))),
